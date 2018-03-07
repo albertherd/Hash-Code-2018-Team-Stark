@@ -33,7 +33,24 @@ namespace ConsoleApp
                 carts.Add(c);
             }
 
-            structure.Rides = CarsHelper.GetEarliestStart(structure.Rides);
+
+            var ridesDone = 0;
+            var totalRides = structure.Rides.Count;
+
+            //For C
+            // structure.Rides = CarsHelper.GetEarliestStart(structure.Rides);
+
+            //For D
+            structure.RemoveImpossibleRidesStart(0);
+            //structure.RemoveFarRidesAndEarlyLong(3500,20000);
+            //structure.RemoveRidesBetween(3000, 6000);
+            //structure.RemoveFarRides(5000);
+            structure.Rides = CarsHelper.GetEarliestStart3(structure.Rides);
+
+           // structure.Rides = CarsHelper.GetByDistanceClosest(structure.Rides);
+            
+
+            
 
             for (int step = 0; step < structure.Steps; step++)
             {
@@ -45,12 +62,30 @@ namespace ConsoleApp
                         cart.Location = cart.Ride.End;
                         structure.Rides.Remove(cart.Ride);
                         cart.RidesDone.Add(cart.Ride);
+                        ridesDone++;
                         cart.Ride = null;
                     }
 
-                    if (cart.IsIdle)
+                    if (step % 200==0)
                     {
-                        Ride r = structure.GetNextRide(step, cart);
+                        structure.RemoveImpossibleRides(step);
+                        Console.Write($"\rStep {step} / {structure.Steps}; Rides {ridesDone}/{totalRides}");
+                        
+                    }
+
+                    if (cart.IsIdle) { 
+
+                        Ride r = null;
+
+                        //if (step == 0)
+                        //{
+                        //    r = structure.ChooseFirstRide(cart);
+                        //}
+                        //else
+                        {
+                            r = structure.GetNextRide(step, cart);
+                        }
+
                         if (r != null)
                         {
                             r.IsInUse = true;
@@ -61,7 +96,7 @@ namespace ConsoleApp
             }
 
             StringBuilder builder = new StringBuilder();
-            int totalRides = 0;
+            totalRides = 0;
 
             for (int id = 0; id < carts.Count; id++)
             {
@@ -80,7 +115,7 @@ namespace ConsoleApp
             Console.WriteLine("Total rides " + initialRides.ToString());
             Console.WriteLine("Finished calculation for " + path);
 
-            File.WriteAllText("result-" + path + ".txt", builder.ToString());
+            File.WriteAllText("result2-" + path + ".txt", builder.ToString());
 
             Console.ReadKey();
         }

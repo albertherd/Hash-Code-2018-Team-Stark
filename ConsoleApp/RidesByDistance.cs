@@ -11,5 +11,6 @@ namespace ConsoleApp
         public Ride Ride { get; set; }
         public int DistanceFromStart { get; set; }
         public int DistanceToEnd { get; set; }
+        public int TimeToWait { get; set; }
     }
 }

@@ -48,6 +48,7 @@
     <Compile Include="Helpers\CarsHelper.cs" />
     <Compile Include="Helpers\DistanceHelper.cs" />
     <Compile Include="Helpers\Parser.cs" />
+    <Compile Include="Helpers\ScoreCalculator.cs" />
     <Compile Include="Helpers\Zone.cs" />
     <Compile Include="Helpers\ZoneHelper.cs" />
     <Compile Include="Location.cs" />
