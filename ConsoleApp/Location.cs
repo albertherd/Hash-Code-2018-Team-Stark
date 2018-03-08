@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace ConsoleApp
 {
+    [Serializable]
     public class Location
     {
         public int Row { get; set; }

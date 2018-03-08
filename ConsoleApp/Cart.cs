@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace ConsoleApp
 {
+    [Serializable]
     public class Cart
     {
         public Location Location { get; set; }
@@ -25,7 +26,7 @@ namespace ConsoleApp
             Ride = r;       
             int distanceToStart = DistanceHelper.GetDistance(Location, r.Start);
             int stepsAtStart = Math.Max(curStep + distanceToStart, r.EarliestStart);
-            int stepAtEnd = stepsAtStart + DistanceHelper.GetDistance(r.Start, r.End);
+            int stepAtEnd = stepsAtStart + r.StepsRequired;
             NextEndTime = stepAtEnd;
         }
 

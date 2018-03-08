@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 using ConsoleApp.Helpers;
 
 namespace ConsoleApp
 {
+    [Serializable]
     public class Structure
     {
         public City City { get; set; }
@@ -56,9 +59,56 @@ namespace ConsoleApp
             return Rides.Where(r => !r.IsInUse).OrderBy(r => r.RoundedEarliestStart).ThenBy(r => r.StepsRequired).FirstOrDefault();
         }
 
-        public Ride GetNextRideForC(int curStep, Cart cart)
+        public Ride GetNextRideForC(int curStep, Cart cart, int maxSteps=200000)
         {
-            return Rides.Where(r => !r.IsInUse).OrderBy(r => r.GetDistance(cart.Location)).FirstOrDefault();
+            var ridesToCheck = Rides.Where(r => !r.IsInUse);
+            if (maxSteps - curStep < 40000)
+                ridesToCheck = ridesToCheck.Where(r => r.IsCurrentlyPossibleFromLocation(curStep, cart.Location));
+
+            return ridesToCheck.OrderBy(r => r.GetDistance(cart.Location)).FirstOrDefault();
+        }
+
+        public Ride GetNextRideForB(int curStep, Cart cart)
+        {
+
+            List<Ride> rides = new List<Ride>();
+            List<RidesByDistance> toSort = new List<RidesByDistance>();
+            foreach (Ride r in Rides)
+            {
+                if (r.IsCurrentlyPossibleFromLocation(curStep, cart.Location) && !r.IsDone && !r.IsInUse)
+                {
+                    rides.Add(r);
+                }
+            }
+
+            if (!rides.Any())
+                return null;
+
+            foreach (Ride ride in rides)
+            {
+                var distStart = DistanceHelper.GetDistance(cart.Location, ride.Start);
+                //if (distStart >= (curStep - ride.EarliestStart))
+                //{
+                toSort.Add(new RidesByDistance()
+                {
+                    Ride = ride,
+                    DistanceFromStart = distStart,
+                    DistanceToEnd = DistanceHelper.GetDistance(cart.Location, ride.End),
+                    TimeToWait = ride.TimeToWaitIfILeaveNow(curStep, cart.Location)
+                    //DistanceToEnd = distStart + ride.StepsRequired
+                });
+                //}
+            }
+
+            if (toSort.Count == 0)
+                return null;
+
+            return toSort.OrderBy(r => r.TimeToWait).ThenBy(cur => cur.DistanceFromStart).FirstOrDefault().Ride;
+            return toSort.OrderBy(r => r.DistanceFromStart).ThenBy(cur => cur.TimeToWait).FirstOrDefault().Ride;
+            return toSort.OrderBy(cur => cur.DistanceFromStart).ThenBy(cur => cur.DistanceToEnd).FirstOrDefault().Ride;
+            return rides.OrderBy(r => r.DistanceFromStart).ThenBy(r => r.LatestFinish).FirstOrDefault();
+            return rides.OrderBy(r => r.LatestStart).FirstOrDefault();
+
         }
 
         public Ride GetNextRide(int curStep, Cart cart)
@@ -143,6 +193,15 @@ namespace ConsoleApp
 
         }
 
-
+        public Structure Clone()
+        {
+            using (MemoryStream stream = new MemoryStream())
+            {
+                BinaryFormatter formatter = new BinaryFormatter();
+                formatter.Serialize(stream, this);
+                stream.Position = 0;
+                return (Structure)formatter.Deserialize(stream);
+            }
+        }
     }
 }

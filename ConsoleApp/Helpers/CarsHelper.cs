@@ -54,7 +54,24 @@ namespace ConsoleApp.Helpers
             sortedRides = unsortedrides.OrderBy(r => r.GetDistance(new Location() { Columm = 0, Row = 0})).ThenByDescending(r => r.LatestFinish).ToList();
 
             return sortedRides;
+        }
 
+        public static List<Ride> GetRandomTopClosest(List<Ride> unsortedrides, int numRides)
+        {
+            List<Ride> sortedRides = new List<Ride>();
+
+            sortedRides = unsortedrides.OrderBy(r => r.GetDistance(new Location() { Columm = 0, Row = 0 })).Take(numRides*2).OrderBy(r=> Guid.NewGuid()).ToList();
+
+            return sortedRides;
+        }
+
+        public static List<Ride> ShuffleRides(List<Ride> unsortedrides)
+        {
+            List<Ride> sortedRides = new List<Ride>();
+
+            sortedRides = unsortedrides.OrderBy(r => Guid.NewGuid()).ToList();
+
+            return sortedRides;
         }
 
         public static List<Ride> EarliestDistance(List<Ride> unsortedrides)

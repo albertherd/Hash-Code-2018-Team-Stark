@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace ConsoleApp
 {
+    [Serializable]
     public class Ride
     {
         public Ride()
@@ -31,7 +32,8 @@ namespace ConsoleApp
         {
             get
             {
-                return Math.Abs(End.Row - Start.Row) + Math.Abs((End.Columm - Start.Columm));
+                return DistanceHelper.GetDistance(Start, End);
+
             }
         }
 
@@ -62,8 +64,6 @@ namespace ConsoleApp
         {
             return Convert.ToInt32(DistanceHelper.GetDistance(curLocation, Start) / 400);
         }
-
-        
 
         public bool IsCurrentlyPossibleFromLocation(int currentStep, Location location)
         {
