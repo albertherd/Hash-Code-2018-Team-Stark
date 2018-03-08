@@ -11,6 +11,7 @@ namespace ConsoleApp
     {
         public Location Location { get; set; }
         public int NextEndTime { get; set; }
+        public bool LongDistance { get; set; }
 
         public Ride Ride { get; set; }
         public bool IsIdle

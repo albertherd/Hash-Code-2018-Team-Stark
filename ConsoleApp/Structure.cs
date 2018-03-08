@@ -15,6 +15,8 @@ namespace ConsoleApp
         public int Bonus { get; set; }
         public int Steps { get; set; }
 
+        public static int CurrentLongRides = 6;
+
         public void RemoveImpossibleRides(int curStep)
         {
             Rides = Rides.Where(r => r.IsCurrentlyPossible(curStep)).ToList();
@@ -222,21 +224,33 @@ namespace ConsoleApp
             foreach (Ride ride in rides)
             {
                 var distStart = DistanceHelper.GetDistance(cart.Location, ride.Start);
-                //if (distStart >= (curStep - ride.EarliestStart))
-                //{
                 toSort.Add(new RidesByDistance()
                 {
                     Ride = ride,
                     DistanceFromStart = distStart,
                     DistanceToEnd = DistanceHelper.GetDistance(cart.Location, ride.End),
                     TimeToWait = ride.TimeToWaitIfILeaveNow(curStep, cart.Location)
-                    //DistanceToEnd = distStart + ride.StepsRequired
                 });
-                //}
             }
 
             if (toSort.Count == 0)
                 return null;
+
+            var ridesWithBonuses = toSort.Where(x => x.Ride.WillEarnBonus(curStep, cart.Location)).ToList();
+
+            if(ridesWithBonuses != null && ridesWithBonuses.Any())
+            {
+                toSort = ridesWithBonuses;
+            }
+
+            if (cart.LongDistance)
+            {
+                var longTripsList = toSort.Where(x => x.Ride.StepsRequired > 5000).ToList();
+                if (longTripsList.Any())
+                {
+                    return longTripsList.OrderByDescending(x => x.Ride.StepsRequired).FirstOrDefault().Ride;
+                }
+            }            
 
             return toSort.OrderBy(r => r.DistanceFromStart).ThenBy(cur => cur.TimeToWait).FirstOrDefault().Ride;
             //return toSort.OrderBy(cur => cur.DistanceFromStart).ThenBy(cur => cur.DistanceToEnd).FirstOrDefault().Ride;

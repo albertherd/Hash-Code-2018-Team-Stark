@@ -32,7 +32,7 @@ namespace ConsoleApp.Helpers
         {
             List<Ride> sortedRides = new List<Ride>();
 
-            sortedRides = unsortedrides.OrderBy(r => r.RoundedEarliestStart).ThenBy(r => r.LatestFinish).ToList();
+            sortedRides = unsortedrides.OrderBy(r => r.EarliestStart).ThenBy(r => r.TimeFrame).ToList();
 
             return sortedRides;
 

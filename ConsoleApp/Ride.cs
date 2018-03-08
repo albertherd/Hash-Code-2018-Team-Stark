@@ -23,6 +23,12 @@ namespace ConsoleApp
         public int RoundedEarliestStart { get { return Convert.ToInt32(Math.Ceiling(EarliestStart / 100.0) * 100);} }
         public int LatestFinish { get; set; }
         public bool IsDone { get; set; }
+        public int TimeFrame {
+            get
+            {
+                return LatestFinish - EarliestStart;
+            }
+        }
 
         public bool IsInUse { get; set; }
         public int StepsRequired
@@ -86,6 +92,20 @@ namespace ConsoleApp
             var distStart = DistanceHelper.GetDistance(currentLocation, Start);
             return EarliestStart - curStep - distStart;
 
+        }
+
+        public bool WillEarnBonus(int currentStep, Location currentLocation)
+        {
+            var distanceFromRide = DistanceHelper.GetDistance(currentLocation, Start);
+
+            bool result = EarliestStart - (currentStep + distanceFromRide) == 0;
+
+            if(result)
+            {
+                return result;
+            }
+
+            return result;
         }
 
     }

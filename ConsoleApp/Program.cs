@@ -33,6 +33,20 @@ namespace ConsoleApp
                 carts.Add(c);
             }
 
+            for (int i = 0; i < 5; i++)
+            {
+                Cart c = carts[i];
+                c.LongDistance = true;
+            }
+
+            foreach(Ride ride in structure.Rides)
+            {
+                if(ride.StepsRequired > 5000)
+                {
+                    Console.WriteLine(ride.EarliestStart + " " + ride.LatestFinish);
+                }
+            }
+
 
             var ridesDone = 0;
             var totalRides = structure.Rides.Count;
@@ -46,12 +60,8 @@ namespace ConsoleApp
             //structure.RemoveRidesBetween(3000, 6000);
             //structure.RemoveFarRides(5000);
             structure.Rides = CarsHelper.GetEarliestStart3(structure.Rides);
-
-           // structure.Rides = CarsHelper.GetByDistanceClosest(structure.Rides);
+    
             
-
-            
-
             for (int step = 0; step < structure.Steps; step++)
             {
                 for (int cartid = 0; cartid < structure.Vehicles; cartid++)
@@ -74,17 +84,7 @@ namespace ConsoleApp
                     }
 
                     if (cart.IsIdle) { 
-
-                        Ride r = null;
-
-                        //if (step == 0)
-                        //{
-                        //    r = structure.ChooseFirstRide(cart);
-                        //}
-                        //else
-                        {
-                            r = structure.GetNextRide(step, cart);
-                        }
+                        Ride r = structure.GetNextRide(step, cart);
 
                         if (r != null)
                         {
