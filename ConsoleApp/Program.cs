@@ -45,9 +45,9 @@ namespace ConsoleApp
             //structure.RemoveFarRidesAndEarlyLong(3500,20000);
             //structure.RemoveRidesBetween(3000, 6000);
             //structure.RemoveFarRides(5000);
-            structure.Rides = CarsHelper.GetEarliestStart3(structure.Rides);
+            //structure.Rides = CarsHelper.GetEarliestStart3(structure.Rides);
 
-           // structure.Rides = CarsHelper.GetByDistanceClosest(structure.Rides);
+            structure.Rides = CarsHelper.GetByLatestStart(structure.Rides);
             
 
             
@@ -110,7 +110,7 @@ namespace ConsoleApp
                 builder.Append("\n");
             }
 
-
+            Console.WriteLine("");
             Console.WriteLine("Rides done: " + totalRides.ToString());
             Console.WriteLine("Total rides " + initialRides.ToString());
             Console.WriteLine("Finished calculation for " + path);

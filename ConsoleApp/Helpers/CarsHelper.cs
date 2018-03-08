@@ -86,5 +86,16 @@ namespace ConsoleApp.Helpers
             return sortedRides;
         }
 
+        public static List<Ride> GetByLatestStart(List<Ride> unsortedrides)
+        {
+            List<Ride> sortedRides = new List<Ride>();
+
+            sortedRides = unsortedrides.OrderBy(r => r.LatestStart).ThenBy(r => r.LatestFinish).ToList();
+
+            return sortedRides;
+        }
+
+        
+
     }
 }

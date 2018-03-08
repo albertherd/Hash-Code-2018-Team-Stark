@@ -67,12 +67,12 @@ namespace ConsoleApp
             List<Ride> rides = new List<Ride>();
             List<RidesByDistance> toSort = new List<RidesByDistance>();
 
-            //For C
+            ////For C
             List<Ride> ridesToChoose = new List<Ride>();
             ridesToChoose = Rides.Where(r => !r.IsInUse && !r.IsDone && r.IsCurrentlyPossibleFromLocation(curStep, cart.Location)).ToList();
 
-            //return Rides.Where(r=> !r.IsInUse).OrderBy(r => r.GetDistance(cart.Location)).FirstOrDefault();
-
+            ////return Rides.Where(r=> !r.IsInUse).OrderBy(r => r.GetDistance(cart.Location)).FirstOrDefault();
+            //return Rides.Where(r => !r.IsInUse).OrderBy(r => r.GetDistance(cart.Location)).Take(2).OrderBy(cur=> Guid.NewGuid()).FirstOrDefault();
 
 
             //return GetClosestRide(cart.Location, curStep);
@@ -218,6 +218,9 @@ namespace ConsoleApp
 
             if (!rides.Any())
                 return null;
+
+            return rides.OrderBy(r => r.LatestStart).FirstOrDefault();
+            return rides.OrderBy(r => r.DistanceFromStart).ThenBy(r => r.LatestFinish).FirstOrDefault();
 
             foreach (Ride ride in rides)
             {

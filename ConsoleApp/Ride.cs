@@ -22,6 +22,8 @@ namespace ConsoleApp
         public int EarliestStart { get; set; }
         public int RoundedEarliestStart { get { return Convert.ToInt32(Math.Ceiling(EarliestStart / 100.0) * 100);} }
         public int LatestFinish { get; set; }
+
+
         public bool IsDone { get; set; }
 
         public bool IsInUse { get; set; }
@@ -32,6 +34,9 @@ namespace ConsoleApp
                 return Math.Abs(End.Row - Start.Row) + Math.Abs((End.Columm - Start.Columm));
             }
         }
+
+        public int LatestStart { get { return LatestFinish - StepsRequired; } }
+
 
         public int DistanceFromStart
         {
