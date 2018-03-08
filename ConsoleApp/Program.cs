@@ -14,11 +14,13 @@ namespace ConsoleApp
         static void Main(string[] args)
         {
             //string path = "b_should_be_easy.in";
-            //string path = "c_no_hurry.in";
-            string path = "d_metropolis.in";
-            //string path = "e_high_bonus.in";
+            string pathC = "c_no_hurry.in";
+            string pathD = "d_metropolis.in";
+            string pathE = "e_high_bonus.in";
 
-            string allFile = FileReader.ReadFile(path);
+            string currentFile = pathD;
+
+            string allFile = FileReader.ReadFile(currentFile);
 
             var firstLine = FileReader.GetFirstLine(allFile);
             List<string> otherLines = FileReader.GetOtherLines(allFile);
@@ -47,7 +49,7 @@ namespace ConsoleApp
             //structure.RemoveFarRides(5000);
             structure.Rides = CarsHelper.GetEarliestStart3(structure.Rides);
 
-           // structure.Rides = CarsHelper.GetByDistanceClosest(structure.Rides);
+            //structure.Rides = CarsHelper.GetByLatestStart(structure.Rides);
             
 
             
@@ -83,7 +85,12 @@ namespace ConsoleApp
                         //}
                         //else
                         {
-                            r = structure.GetNextRide(step, cart);
+                            if (currentFile.Equals(pathC,StringComparison.InvariantCultureIgnoreCase))
+                                r = structure.GetNextRideForC(step, cart);
+                            else if (currentFile.Equals(pathD, StringComparison.InvariantCultureIgnoreCase))
+                                r = structure.GetNextRide(step, cart);
+                            else if (currentFile.Equals(pathE, StringComparison.InvariantCultureIgnoreCase))
+                                r = structure.GetNextRide(step, cart);
                         }
 
                         if (r != null)
@@ -110,12 +117,12 @@ namespace ConsoleApp
                 builder.Append("\n");
             }
 
-
+            Console.WriteLine("");
             Console.WriteLine("Rides done: " + totalRides.ToString());
             Console.WriteLine("Total rides " + initialRides.ToString());
-            Console.WriteLine("Finished calculation for " + path);
+            Console.WriteLine("Finished calculation for " + currentFile);
 
-            File.WriteAllText("result2-" + path + ".txt", builder.ToString());
+            File.WriteAllText("result2-" + currentFile + ".txt", builder.ToString());
 
             Console.ReadKey();
         }
