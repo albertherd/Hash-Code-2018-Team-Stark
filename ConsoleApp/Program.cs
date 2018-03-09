@@ -37,62 +37,65 @@ namespace ConsoleApp
 
             //For D
             initialstructure.RemoveImpossibleRidesStart(0);
+
             //structure.RemoveFarRidesAndEarlyLong(3500,20000);
             //structure.RemoveRidesBetween(3000, 6000);
             //structure.RemoveFarRides(5000);
-
+            //initialstructure.RemoveShortRides(800);
 
             //structure.Rides = CarsHelper.GetByLatestStart(structure.Rides);
 
-            while (true)
+            //Looper(initialstructure, CartStepper);
+
+            
+            List<Cart> carts = new List<Cart>();
+            for (int i = 0; i < initialstructure.Vehicles; i++)
             {
-                List<Cart> carts = new List<Cart>();
-                for (int i = 0; i < initialstructure.Vehicles; i++)
-                {
-                    Cart c = new Cart() { Location = new Location() { Row = 0, Columm = 0 } };
-                    carts.Add(c);
-                }
-                Structure structure = initialstructure.Clone();
+                Cart c = new Cart() { Location = new Location() { Row = 0, Columm = 0 } };
+                carts.Add(c);
+            }
+            Structure structure = initialstructure.Clone();
 
-                CartStepper(structure, carts);
-                //StepCarter(structure, carts);
+            //CartStepper(structure, carts);
+            //StepCarter(structure, carts);
+            BestCartForC(structure);
 
-                StringBuilder builder = new StringBuilder();
-                var totalRides = 0;
+            StringBuilder builder = new StringBuilder();
+            var totalRides = 0;
 
-                for (int id = 0; id < carts.Count; id++)
-                {
-                    totalRides += carts[id].RidesDone.Count;
+            for (int id = 0; id < carts.Count; id++)
+            {
+                totalRides += carts[id].RidesDone.Count;
 
-                    builder.Append(carts[id].RidesDone.Count);
-                    builder.Append(" ");
+                builder.Append(carts[id].RidesDone.Count);
+                builder.Append(" ");
 
-                    var ids = carts[id].RidesDone.Select(x => x.Id).ToList();
-                    builder.Append(string.Join(" ", ids.ToArray()));
-                    builder.Append("\n");
-                }
+                var ids = carts[id].RidesDone.Select(x => x.Id).ToList();
+                builder.Append(string.Join(" ", ids.ToArray()));
+                builder.Append("\n");
+            }
 
-                Console.WriteLine("\r");
+            Console.WriteLine("\r");
 
-                if (currentFile.Equals(pathC, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    long curScore = ScoreCalculator.GetScoreForC(carts);
-                    highestScore = Math.Max(curScore, highestScore);
+            if (currentFile.Equals(pathC, StringComparison.InvariantCultureIgnoreCase))
+            {
+                long curScore = ScoreCalculator.GetScoreForC(carts);
+                highestScore = Math.Max(curScore, highestScore);
 
-                    Console.WriteLine("Cur Score: " + curScore);
-                    Console.WriteLine("Best Score: " + highestScore);
-                    File.WriteAllText("result-" + currentFile + "-" + curScore + ".txt", builder.ToString());
-
-                }
-                else
-                {
-                    Console.WriteLine("Rides done: " + totalRides.ToString());
-                    Console.WriteLine("Total rides " + initialRides.ToString());
-                    Console.WriteLine("Finished calculation for " + currentFile);
-                    File.WriteAllText("result2-" + currentFile + ".txt", builder.ToString());
-                }
+                Console.WriteLine("Cur Score: " + curScore);
+                Console.WriteLine("Best Score: " + highestScore);
+                File.WriteAllText("result-" + currentFile + "-" + curScore + ".txt", builder.ToString());
 
             }
+            else
+            {
+                Console.WriteLine("Rides done: " + totalRides.ToString());
+                Console.WriteLine("Total rides " + initialRides.ToString());
+                Console.WriteLine("Finished calculation for " + currentFile);
+                File.WriteAllText("result2-" + currentFile + ".txt", builder.ToString());
+            }
+
+            
             
 
             Console.ReadKey();
@@ -156,7 +159,62 @@ namespace ConsoleApp
             }
         }
 
-        private static void CartStepper(Structure structure, List<Cart> carts)
+        private static void Looper(Structure initialStructure, Func<Structure, List<Cart>, bool> func)
+        {
+            long highestScore = 0;
+            int initialRides = initialStructure.Rides.Count;
+            
+            while (true)
+            {
+                List<Cart> carts = new List<Cart>();
+                for (int i = 0; i < initialStructure.Vehicles; i++)
+                {
+                    Cart c = new Cart() { Location = new Location() { Row = 0, Columm = 0 } };
+                    carts.Add(c);
+                }
+                Structure structure = initialStructure.Clone();
+
+                func(structure, carts);
+
+                StringBuilder builder = new StringBuilder();
+                var totalRides = 0;
+
+                for (int id = 0; id < carts.Count; id++)
+                {
+                    totalRides += carts[id].RidesDone.Count;
+
+                    builder.Append(carts[id].RidesDone.Count);
+                    builder.Append(" ");
+
+                    var ids = carts[id].RidesDone.Select(x => x.Id).ToList();
+                    builder.Append(string.Join(" ", ids.ToArray()));
+                    builder.Append("\n");
+                }
+
+                Console.WriteLine("\r");
+
+                if (currentFile.Equals(pathC, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    long curScore = ScoreCalculator.GetScoreForC(carts);
+                    highestScore = Math.Max(curScore, highestScore);
+
+                    Console.WriteLine("Cur Score: " + curScore);
+                    Console.WriteLine("Best Score: " + highestScore);
+                    File.WriteAllText("result-" + currentFile + "-" + curScore + ".txt", builder.ToString());
+
+                }
+                else
+                {
+                    Console.WriteLine("Rides done: " + totalRides.ToString());
+                    Console.WriteLine("Total rides " + initialRides.ToString());
+                    Console.WriteLine("Finished calculation for " + currentFile);
+                    File.WriteAllText("result2-" + currentFile + ".txt", builder.ToString());
+                }
+
+            }
+        }
+
+        private static bool CartStepper(Structure structure, List<Cart> carts)
         {
             structure.Rides = CarsHelper.GetByDistanceClosest(structure.Rides);
 
@@ -213,6 +271,85 @@ namespace ConsoleApp
                 Console.Write($"\rCart {cartid+1} / {structure.Vehicles}; Rides {ridesDone}/{totalRides}");
 
             }
+
+            return true;
+        }
+
+        private static bool BestCartForC(Structure initialStructure)
+        {
+            var cartscompleted = 0;
+            
+
+            while (cartscompleted < initialStructure.Vehicles)
+            {
+                var numRides = initialStructure.Rides.Count;
+                List<RideScore> scorePerRide = new List<RideScore>();
+               
+
+                //First ride
+                for (int i = 0; i < numRides; i++) {
+
+                    Structure structure = initialStructure.Clone();
+                    List<Ride> ridesToRemove = new List<Ride>();
+                    Cart cart = new Cart();
+                    cart.Location = new Location() { Row = 0, Columm = 0 };
+
+                    var curStep = 1;
+                    var rideScore = 0;
+
+                    Ride r = structure.Rides[i];
+                    r.IsInUse = true;
+                    cart.AssignRide(r, i);
+
+                    while (curStep <= structure.Steps)
+                    {
+                        if (cart.IsIdle)
+                        {
+                            Ride nextRide = structure.GetNextRideForC(curStep, cart);
+                            if (nextRide == null) curStep = structure.Steps + 1;
+                            else
+                            {
+                                nextRide.IsInUse = true;
+                                cart.AssignRide(nextRide, curStep);
+                            }
+
+                        }
+
+                        if (!cart.IsIdle)
+                        {
+                            curStep = cart.NextEndTime;
+                            cart.Location = cart.Ride.End;
+                            ridesToRemove.Add(cart.Ride);
+                            structure.Rides.Remove(cart.Ride);
+                            rideScore += cart.Ride.StepsRequired;
+                            cart.Ride = null;
+                        }
+
+                    }
+
+                    scorePerRide.Add(new RideScore() { RideId = i, Score = rideScore, RidesToRemove = ridesToRemove });
+
+                    if (i%10==0) Console.Write($"\rCart {cartscompleted} / {structure.Vehicles}; Rides {i}/{numRides}");
+
+                }
+
+                RideScore bestRideToStart = scorePerRide.OrderByDescending(r => r.Score).FirstOrDefault();
+                Console.WriteLine($"Best Ride Cart {cartscompleted}: Ride {bestRideToStart.RideId}");
+                using (StreamWriter sw = File.AppendText("bestrides-" + currentFile + ".txt"))
+                {
+                    sw.WriteLine(bestRideToStart.RideId);
+                }
+
+
+                foreach(Ride ride in bestRideToStart.RidesToRemove)
+                {
+                    Ride rideFromStructure = initialStructure.Rides.Single(r => r.Id == ride.Id);
+                    initialStructure.Rides.Remove(rideFromStructure);
+                }
+
+                cartscompleted++;
+            }
+            return true;
         }
     }
 }

@@ -33,6 +33,11 @@ namespace ConsoleApp
             Rides = Rides.Where(r => r.StepsRequired < maxSteps).ToList();
         }
 
+        public void RemoveShortRides(int minSteps)
+        {
+            Rides = Rides.Where(r => r.StepsRequired > minSteps).ToList();
+        }
+
         public void RemoveRidesBetween(int steps1, int steps2)
         {
             Rides = Rides.Where(r => r.StepsRequired < steps1 || r.StepsRequired > steps2).ToList();

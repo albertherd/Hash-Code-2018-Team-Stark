@@ -56,7 +56,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reader\FileReader.cs" />
     <Compile Include="Ride.cs" />
+    <Compile Include="RideForParse.cs" />
     <Compile Include="RidesByDistance.cs" />
+    <Compile Include="RideScore.cs" />
     <Compile Include="Structure.cs" />
   </ItemGroup>
   <ItemGroup>
